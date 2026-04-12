@@ -494,18 +494,20 @@ def check_seo_per_city(business, website, cities, state):
         sys.stdout.flush()
 
         # Filter to real home care agency websites only -- skip directories,
-        # info articles, and gov/medical sites. For each kept result, use the
-        # branded title when present, else humanize the domain (so "Home Care"
-        # generic titles fall back to e.g. "Acti Kare").
+        # info articles, and gov/medical sites. Dedupe by name so a domain
+        # that appears twice (homepage + city page) shows once.
         top_3 = []
+        seen_names = set()
         for r in raw_results:
             if is_real_agency_result(r):
                 name = display_name_from_result(r)
+                key = name.lower().strip() if name else ""
                 print(
                     f"[DEBUG SEO {city}] KEEP domain={r.get('domain')!r} "
                     f"-> display_name={name!r}"
                 )
-                if name:
+                if name and key not in seen_names:
+                    seen_names.add(key)
                     top_3.append(name)
                     if len(top_3) >= 3:
                         break
