@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+temp_health_check.json
+.google_cookies.json
+*.pdf
+.venv/
