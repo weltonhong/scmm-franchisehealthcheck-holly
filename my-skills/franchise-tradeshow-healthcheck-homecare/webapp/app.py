@@ -221,7 +221,7 @@ US_STATES = [
 ]
 
 with st.form("health_check_form", clear_on_submit=False):
-    business = st.text_input("Business Name", placeholder="e.g., Comfort Keepers")
+    business = st.text_input("Business Name", value="Always Best Care")
     home_city = st.text_input("Home City", placeholder="e.g., Tampa")
     state = st.selectbox("State", US_STATES, index=US_STATES.index("FL"))
     second_city = st.text_input("Second City", placeholder="e.g., Plant City")
