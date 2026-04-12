@@ -141,7 +141,7 @@ SCMM_GRAY = "#6C757D"
 SCMM_LIGHT = "#F1F5F4"
 
 st.set_page_config(
-    page_title="Franchise Health Check | Senior Care Marketing Max",
+    page_title="Online Health Check | Senior Care Marketing Max",
     page_icon="🩺",
     layout="centered",
 )
@@ -204,7 +204,7 @@ if LOGO_PATH.exists():
     with cols[1]:
         st.image(str(LOGO_PATH), use_container_width=True)
 
-st.markdown("<h1 class='scmm-title'>Franchise Health Check</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='scmm-title'>Online Health Check</h1>", unsafe_allow_html=True)
 st.markdown(
     "<div class='scmm-sub'>A 60-second snapshot of how the prospect shows up online.</div>",
     unsafe_allow_html=True,
