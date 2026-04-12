@@ -8,7 +8,9 @@ Saves to OneDrive Desktop.
 
 import datetime
 import io
+import json as _json
 import os
+import urllib.request
 from pathlib import Path
 
 import qrcode
@@ -206,35 +208,107 @@ class CTAFooterCanvas(pdfcanvas.Canvas):
             )
 
 
+# ----------------------------- population lookup -----------------------------
+
+STATE_FIPS = {
+    "AL": "01", "AK": "02", "AZ": "04", "AR": "05", "CA": "06", "CO": "08",
+    "CT": "09", "DE": "10", "DC": "11", "FL": "12", "GA": "13", "HI": "15",
+    "ID": "16", "IL": "17", "IN": "18", "IA": "19", "KS": "20", "KY": "21",
+    "LA": "22", "ME": "23", "MD": "24", "MA": "25", "MI": "26", "MN": "27",
+    "MS": "28", "MO": "29", "MT": "30", "NE": "31", "NV": "32", "NH": "33",
+    "NJ": "34", "NM": "35", "NY": "36", "NC": "37", "ND": "38", "OH": "39",
+    "OK": "40", "OR": "41", "PA": "42", "RI": "44", "SC": "45", "SD": "46",
+    "TN": "47", "TX": "48", "UT": "49", "VT": "50", "VA": "51", "WA": "53",
+    "WV": "54", "WI": "55", "WY": "56",
+}
+
+_census_cache = {}
+
+
+def _normalize_place(s):
+    return s.lower().replace(".", "").replace("saint ", "st ").replace("ft ", "fort ").strip()
+
+
+def get_city_population(city, state_abbr):
+    """Look up city population from the US Census Bureau (2020 Decennial).
+    Free API, no key required. Returns int or None."""
+    cache_key = (city.lower().strip(), state_abbr.upper())
+    if cache_key in _census_cache:
+        return _census_cache[cache_key]
+
+    fips = STATE_FIPS.get(state_abbr.upper())
+    if not fips:
+        return None
+    url = (
+        f"https://api.census.gov/data/2020/dec/pl"
+        f"?get=P1_001N,NAME&for=place:*&in=state:{fips}"
+    )
+    try:
+        req = urllib.request.Request(url)
+        resp = urllib.request.urlopen(req, timeout=10)
+        data = _json.loads(resp.read())
+        city_norm = _normalize_place(city)
+        matches = []
+        for row in data[1:]:
+            place_name = row[1].split(",")[0].strip()
+            bare = _normalize_place(place_name)
+            for suffix in (" city", " town", " village", " cdp", " borough", " municipality"):
+                if bare.endswith(suffix):
+                    bare = bare[: -len(suffix)].strip()
+                    break
+            if bare == city_norm:
+                matches.append(int(row[0]))
+        result = max(matches) if matches else None
+        _census_cache[cache_key] = result
+        return result
+    except Exception:
+        return None
+
+
+def _pop_multiplier(population):
+    """Scale the lost-calls estimate by city population.
+    Base tier (<100K) = 1.0x. Larger cities get proportionally more."""
+    if population is None or population < 100_000:
+        return 1.0
+    if population < 300_000:
+        return 1.5
+    if population < 750_000:
+        return 2.5
+    return 4.0
+
+
 # ----------------------------- impact estimators -----------------------------
 
 
 def estimate_lost_calls(results):
-    """Heuristic estimate of inquiry calls per month going to competitors.
+    """Heuristic estimate of inquiry calls per month going to competitors,
+    scaled by city population so larger markets show larger numbers.
 
-    Inputs:
-      - Each city the prospect is missing from the 3-Pack: +5 to +10 calls
-      - Each city competitors run ads but the prospect does not: +3 to +6
-      - Significant review gap (competitor has 2x+ reviews): +20% multiplier
-        on the total (because even calls that DO come in convert worse)
+    Base rates per city (scaled by population multiplier):
+      - Missing from 3-Pack: +5 to +10 calls * multiplier
+      - Competitors running ads, prospect is not: +3 to +6 * multiplier
+      - Significant review gap (2x+): +20% on total
 
     Returns (low, high) integer tuple.
     """
     cities = results.get("cities") or []
+    state = results.get("state") or ""
     pack_results = (results.get("3pack") or {}).get("results") or {}
     ads_per_city = results.get("ads") or {}
 
-    low = 0
-    high = 0
+    low = 0.0
+    high = 0.0
     for c in cities:
+        pop = get_city_population(c, state)
+        mult = _pop_multiplier(pop)
         if not (pack_results.get(c) or {}).get("in_3_pack"):
-            low += 5
-            high += 10
+            low += 5 * mult
+            high += 10 * mult
         d = ads_per_city.get(c) or {}
         comps = d.get("competitors_running_ads") or []
         if comps and not d.get("prospect_running_ads"):
-            low += 3
-            high += 6
+            low += 3 * mult
+            high += 6 * mult
 
     # Review gap multiplier
     target = (results.get("google_intel") or {}).get("target") or {}
@@ -242,10 +316,10 @@ def estimate_lost_calls(results):
     top = results.get("top_competitor") or {}
     comp_reviews = top.get("review_count") or 0
     if comp_reviews >= max(30, target_reviews * 2):
-        low = int(round(low * 1.2))
-        high = int(round(high * 1.2))
+        low *= 1.2
+        high *= 1.2
 
-    return low, high
+    return int(round(low)), int(round(high))
 
 
 def count_gaps(results):
