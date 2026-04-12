@@ -457,7 +457,7 @@ def _build_recommendations_top2(results):
         return [text for _, text in candidates[:2]]
 
     return [
-        "Your foundation is strong across reviews, local visibility, and your website. "
+        "Your foundation is strong across reviews, local visibility, and organic search. "
         "The agencies in your service area are watching for any opening. Stay ahead by "
         "compounding what is already working before they catch up."
     ]
