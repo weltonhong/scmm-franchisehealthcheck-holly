@@ -269,6 +269,14 @@ def parse_ads_from_html(html):
         "assistant", "assistance", "help", "support", "near", "me",
         "us", "about", "from", "by", "on", "at", "all", "any",
         "health", "healthcare", "nursing", "medical", "respite", "live",
+        # Marketing / ad copy words
+        "rates", "rate", "options", "option", "pricing", "prices", "price",
+        "costs", "cost", "plans", "plan", "packages", "package", "free",
+        "affordable", "cheap", "discount", "discounts", "deal", "deals",
+        "quote", "quotes", "estimate", "estimates", "today", "now",
+        "available", "availability", "information", "info", "details",
+        "compare", "comparison", "reviews", "ratings", "offers", "offer",
+        "solutions", "solution",
     }
 
     def is_generic_ad_text(text):

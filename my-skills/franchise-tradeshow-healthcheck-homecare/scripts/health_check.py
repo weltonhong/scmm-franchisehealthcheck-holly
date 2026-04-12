@@ -186,19 +186,16 @@ def humanize_domain(domain):
 
 
 def display_name_from_result(result):
-    """Choose the cleanest display name for an organic result.
+    """Return the humanized domain as the display name for an organic result.
 
-    Prefer the page title when it contains a real brand. Fall back to a
-    humanized domain when the title is generic ("Home Care", "Adult Family
-    Home", etc.).
+    Page titles are unreliable (they contain city names, marketing copy, and
+    "Costs and Financial Assistance" style listicles). The domain is the
+    actual brand for home care agencies, so always derive the name from it.
     """
-    title = (result.get("title") or "").strip()
     domain = (result.get("domain") or "").strip()
-    if title and not is_generic_title(title):
-        return title
     if domain:
         return humanize_domain(domain)
-    return title or domain
+    return (result.get("title") or "").strip()
 
 
 def is_real_agency_result(result):
