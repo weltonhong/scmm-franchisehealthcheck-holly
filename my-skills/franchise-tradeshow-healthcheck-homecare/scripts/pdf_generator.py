@@ -2,7 +2,7 @@
 PDF Generator - Franchise Trade Show Health Check (SCMM brand)
 
 Builds a one-page branded PDF scorecard for a franchise prospect.
-No overall letter grade, no website section. CTA routes to Vickey Lopez.
+No overall letter grade, no website section. CTA routes to Holly Rehbock.
 Saves to OneDrive Desktop.
 """
 
@@ -44,7 +44,7 @@ SCMM_LOGO_PATH = (
 )
 
 CALENDLY_URL = (
-    "https://calendly.com/vickey-lopez/vickeylopezseniormarketingspecialist"
+    "https://calendly.com/holly-rehbock-/1-hour-meeting?back=1"
 )
 
 
@@ -152,7 +152,7 @@ class CTAFooterCanvas(pdfcanvas.Canvas):
             line2 = ("Helvetica-Bold", 11,
                      "stronger and your phone stays quiet.")
             line3 = ("Helvetica", 10,
-                     "Contact Vickey Lopez: Vickey.Lopez@RingRingMarketing.com")
+                     "Contact Holly Rehbock: Holly.Rehbock@RingRingMarketing.com")
             line4 = ("Helvetica-Bold", 13,
                      "Call today.  (888) 383-2848  |  www.SeniorCareMarketingMax.com")
         else:
@@ -161,7 +161,7 @@ class CTAFooterCanvas(pdfcanvas.Canvas):
             line2 = ("Helvetica-Bold", 11,
                      "get stronger and your phone stays quiet.")
             line3 = ("Helvetica", 10,
-                     "Contact Vickey Lopez: Vickey.Lopez@RingRingMarketing.com")
+                     "Contact Holly Rehbock: Holly.Rehbock@RingRingMarketing.com")
             line4 = ("Helvetica-Bold", 13,
                      "Call today.  (888) 383-2848  |  www.SeniorCareMarketingMax.com")
 

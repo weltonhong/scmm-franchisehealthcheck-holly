@@ -2,7 +2,7 @@
 Online Health Check (Franchise) - Streamlit Web App
 Senior Care Marketing Max
 
-Franchise version: no website audit, no overall grade, CTA routes to Vickey Lopez.
+Franchise version: no website audit, no overall grade, CTA routes to Holly Rehbock.
 
 Wraps the franchise trade show health check into a browser UI. The rep enters
 business + cities, clicks Run, and watches the scan unfold live in the page.
@@ -226,7 +226,7 @@ US_STATES = [
 ]
 
 with st.form("health_check_form", clear_on_submit=False):
-    business = st.text_input("Business Name", value="Always Best Care")
+    business = st.text_input("Business Name", value="Home Helpers Home Care")
     home_city = st.text_input("Home City", placeholder="e.g., Tampa")
     state = st.selectbox("State", US_STATES, index=US_STATES.index("FL"))
     second_city = st.text_input("Second City (optional)", placeholder="leave blank to skip")

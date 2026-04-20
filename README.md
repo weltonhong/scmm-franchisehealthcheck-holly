@@ -5,11 +5,11 @@ Streamlit web app for running franchise home care online health checks at trade 
 **Franchise version differences from the standard health check:**
 - No website audit (franchise websites are corporate-built)
 - No overall letter grade (individual section grades only)
-- CTA routes to Vickey Lopez (Vickey.Lopez@RingRingMarketing.com)
+- CTA routes to Holly Rehbock (Holly.Rehbock@RingRingMarketing.com)
 
 ## Deployment
 
-Deployed on Streamlit Cloud at: `scmm-franchisehealthcheck-vickey.streamlit.app`
+Deployed on Streamlit Cloud at: `scmm-franchisehealthcheck-holly.streamlit.app`
 
 **Main file path:** `my-skills/franchise-tradeshow-healthcheck-homecare/webapp/app.py`
 
